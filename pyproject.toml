@@ -1,7 +1,7 @@
 [project]
 name = "ml-learning-lab"
 version = "0.1.0"
-description = "Add your description here"
+description = "ML learning lab"
 readme = "README.md"
 authors = [
     { name = "Klose6", email = "4652730+Klose6@users.noreply.github.com" }
