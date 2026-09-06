@@ -1,0 +1,21 @@
+[project]
+name = "ml-learning-lab"
+version = "0.1.0"
+description = "Add your description here"
+readme = "README.md"
+authors = [
+    { name = "Klose6", email = "4652730+Klose6@users.noreply.github.com" }
+]
+requires-python = ">=3.13"
+dependencies = [
+    "matplotlib>=3.11.1",
+    "numpy>=2.5.3",
+    "torch>=2.14.0",
+]
+
+[project.scripts]
+ml-learning-lab = "ml_learning_lab:main"
+
+[build-system]
+requires = ["uv_build>=0.12.10,<0.13.0"]
+build-backend = "uv_build"
