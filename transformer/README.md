@@ -10,7 +10,7 @@ This module walks through the core components of the original Transformer, start
 
 The attention mechanism maps a query and a set of key-value pairs to an output:
 
-$$\text{Attention}(Q, K, V) = \text{softmax}\!\left(\frac{QK^\top}{\sqrt{d_k}}\right)V$$
+$$\text{Attention}(Q, K, V) = \text{softmax}\left(\frac{QK^\top}{\sqrt{d_k}}\right)V$$
 
 Where:
 

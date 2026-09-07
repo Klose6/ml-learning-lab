@@ -11,11 +11,14 @@ torch.manual_seed(seed_size)
 X = torch.randn(3, 4)
 Q = X
 K = X
+V = X
 scores = Q@K.T
 
 d_k = K.size(-1)
 
-scaled_scores = scores / torch.sqrt(torch.tensor(d_k, dtype=torch.float32))
+scaled_scores = scores / d_k ** 0.5
 
-print(scaled_scores)
-print(scaled_scores.shape)
+weights = torch.softmax(scaled_scores, dim=-1)
+output = weights@V
+print(output)
+print(output.shape)
