@@ -5,31 +5,16 @@ Transformer implementation with PyTorch
 import torch
 import math
 
-seed_size = 42
-torch.manual_seed(seed_size)
+class MultiHeadAttention(torch.nn.Module):
+    def __init__(self, d_model: int = 8, num_heads: int = 2):
+        super.__init__()
 
-# Implement the attention formula
-X = torch.randn(3, 4)
-# Learnable projection
-WQ = torch.nn.Linear(4, 4)
-WK = torch.nn.Linear(4, 4)
-WV = torch.nn.Linear(4, 4)
+        assert d_model % num_heads == 0
+        self.d_model = d_model
+        self.num_heads = num_heads
+        self.head_dim = self.d_model // self.num_heads
 
-Q = WQ(X)
-K = WK(X)
-V = WV(X)
-# Calculate the attention scores
-scores = Q@K.T
-# Scale
-d_k = K.size(-1)
-scaled_scores = scores / math.sqrt(d_k)
-# Mask the top half for causal attention
-r, c = torch.triu_indices(scaled_scores.size(0), scaled_scores.size(1), offset=1)
-scaled_scores[r, c] = float("-inf")
-# Run softmax on the last dimension(-1) of the tensor
-weights = torch.softmax(scaled_scores, dim=-1)
-# Weighted sum of values
-output = weights@V
-
-print(weights)
-print(output)
+        self.WQ = torch.nn.Linear(d_model, d_model)
+        self.WK = torch.nn.Linear(d_model, d_model)
+        self.WV = torch.nn.Linear(d_model, d_model)
+        self.output_project = torch.nn.Linear(d_model, d_model)
