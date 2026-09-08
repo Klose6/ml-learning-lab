@@ -8,7 +8,11 @@ import math
 class MultiHeadAttention(torch.nn.Module):
     '''
     Multi-head attention is largely about looking at the same tokens through several different learned “lenses” at once, 
-    instead of forcing one attention pattern to do everything
+    instead of forcing one attention pattern to do everything.
+    For input X with shape (batch_size, seq_len, d_model):
+        batch_size: How many sequences in the batch
+        seq_len: How many tokens per sequence
+        d_model: Embedding size per token
     '''
     def __init__(self, d_model: int = 8, num_heads: int = 2):
         # Initializes PyTorch's nn.Module base class
@@ -20,7 +24,7 @@ class MultiHeadAttention(torch.nn.Module):
         self.num_heads = num_heads
         # Size of each head's subspace
         self.head_dim = self.d_model // self.num_heads
-
+        # WQ, WK, WV start random and are learned jointly during training by backprop from the task loss
         self.WQ = torch.nn.Linear(d_model, d_model)
         self.WK = torch.nn.Linear(d_model, d_model)
         self.WV = torch.nn.Linear(d_model, d_model)
@@ -29,7 +33,9 @@ class MultiHeadAttention(torch.nn.Module):
     def forward(self, X):
         batch_size, seq_len, _ = X.shape
         Q = self.WQ(X)
+        #  Reshapes the tensor without changing the underlying numbers
         Q = Q.view(batch_size, seq_len, self.num_heads, self.head_dim)
+        # (batch, seq, heads, head_dim) -> (batch, heads, seq, head_dim)
         Q = Q.transpose(1, 2)
         K = self.WK(X)
         K = K.view(batch_size, seq_len, self.num_heads, self.head_dim)
@@ -38,6 +44,7 @@ class MultiHeadAttention(torch.nn.Module):
         V = V.view(batch_size, seq_len, self.num_heads, self.head_dim)
         V = V.transpose(1, 2)
         # process heads
+        # Q: (B, H, S, D) @ K.transpose: (B, H, D, S) = (B, H, S, S), only the last 2 axes are multiplied
         scores = Q @ K.transpose(-2, -1)
         # without it, dot products grow with dimension and softmax becomes very sharp (near one-hot). 
         # Scaling keeps gradients stable
